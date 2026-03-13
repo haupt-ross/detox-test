@@ -1,0 +1,35 @@
+name: Detox iOS Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build iOS (sim release)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Expo prebuild
+        run: npx expo prebuild
+
+      - name: Detox build
+        run: npx detox build -c ios.sim.release
+
+      - name: detox test
+        run: npx detox test -c ios.sim.release
