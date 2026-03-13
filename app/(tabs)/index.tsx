@@ -1,98 +1,247 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useColorScheme,
+} from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { useCart } from '@/context/cart-context';
+import { CATEGORIES, PRODUCTS, Product } from '@/data/products';
 
-export default function HomeScreen() {
+function ProductCard({ product }: { product: Product }) {
+  const { addToCart } = useCart();
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => router.push(`/product/${product.id}`)}>
+      <View style={[styles.cardImage, { backgroundColor: product.color }]}>
+        <Text style={styles.cardEmoji}>{product.emoji}</Text>
+      </View>
+      <View style={styles.cardBody}>
+        <Text style={styles.cardName} numberOfLines={2}>
+          {product.name}
+        </Text>
+        <View style={styles.cardRating}>
+          <Text style={styles.star}>★</Text>
+          <Text style={styles.ratingText}>
+            {product.rating} ({product.reviews})
+          </Text>
+        </View>
+        <View style={styles.cardFooter}>
+          <Text style={styles.cardPrice}>${product.price.toFixed(2)}</Text>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={e => {
+              addToCart(product);
+            }}>
+            <Text style={styles.addButtonText}>+ Add</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+export default function ShopScreen() {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  const filtered =
+    selectedCategory === 'All'
+      ? PRODUCTS
+      : PRODUCTS.filter(p => p.category === selectedCategory);
+
+  return (
+    <View style={[styles.container, isDark && styles.containerDark]}>
+      <View style={[styles.header, isDark && styles.headerDark]}>
+        <Text style={[styles.headerTitle, isDark && styles.textLight]}>🛍️ ShopApp</Text>
+        <Text style={[styles.headerSub, isDark && styles.textMuted]}>
+          {filtered.length} items
+        </Text>
+      </View>
+
+      <View style={[styles.categoryBar, isDark && styles.categoryBarDark]}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryScroll}>
+          {CATEGORIES.map(cat => (
+            <Pressable
+              key={cat}
+              style={[
+                styles.categoryChip,
+                selectedCategory === cat && styles.categoryChipActive,
+              ]}
+              onPress={() => setSelectedCategory(cat)}>
+              <Text
+                style={[
+                  styles.categoryChipText,
+                  selectedCategory === cat && styles.categoryChipTextActive,
+                  isDark && selectedCategory !== cat && styles.textLight,
+                ]}>
+                {cat}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
+
+      <FlatList
+        data={filtered}
+        keyExtractor={item => item.id}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.list}
+        renderItem={({ item }) => <ProductCard product={item} />}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  containerDark: {
+    backgroundColor: '#121212',
+  },
+  header: {
+    paddingTop: 60,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerDark: {
+    backgroundColor: '#1E1E1E',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#11181C',
+  },
+  headerSub: {
+    fontSize: 13,
+    color: '#888',
+  },
+  categoryBar: {
+    backgroundColor: '#fff',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E0E0E0',
+  },
+  categoryBarDark: {
+    backgroundColor: '#1E1E1E',
+    borderBottomColor: '#333',
+  },
+  categoryScroll: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  categoryChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: '#F0F0F0',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  categoryChipActive: {
+    backgroundColor: '#0a7ea4',
+    borderColor: '#0a7ea4',
+  },
+  categoryChipText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  categoryChipTextActive: {
+    color: '#fff',
+  },
+  list: {
+    padding: 10,
+    paddingBottom: 24,
+  },
+  row: {
+    gap: 10,
+    marginBottom: 10,
+  },
+  card: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cardImage: {
+    height: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardEmoji: {
+    fontSize: 48,
+  },
+  cardBody: {
+    padding: 10,
+    gap: 4,
+  },
+  cardName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#11181C',
+    lineHeight: 18,
+  },
+  cardRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  star: {
+    color: '#F4B942',
+    fontSize: 13,
+  },
+  ratingText: {
+    fontSize: 11,
+    color: '#888',
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  cardPrice: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#0a7ea4',
+  },
+  addButton: {
+    backgroundColor: '#0a7ea4',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  textLight: {
+    color: '#ECEDEE',
+  },
+  textMuted: {
+    color: '#9BA1A6',
   },
 });
