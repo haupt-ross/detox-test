@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ScrollView,
@@ -52,29 +52,35 @@ export default function ProductDetailScreen() {
 
         <View style={[styles.content, isDark && styles.contentDark]}>
           <View style={styles.topRow}>
-            <Text style={[styles.category, isDark && styles.textMuted]}>{product.category}</Text>
+            <Text testID="product-detail-category" style={[styles.category, isDark && styles.textMuted]}>
+              {product.category}
+            </Text>
             {inCart && (
-              <View style={styles.inCartBadge}>
+              <View testID="product-detail-in-cart-badge" style={styles.inCartBadge}>
                 <Text style={styles.inCartText}>In cart ({cartItem!.quantity})</Text>
               </View>
             )}
           </View>
 
-          <Text style={[styles.name, isDark && styles.textLight]}>{product.name}</Text>
+          <Text testID="product-detail-name" style={[styles.name, isDark && styles.textLight]}>
+            {product.name}
+          </Text>
 
           <View style={styles.ratingRow}>
             <Text style={styles.stars}>{stars.join('')}</Text>
-            <Text style={[styles.ratingLabel, isDark && styles.textMuted]}>
+            <Text testID="product-detail-rating" style={[styles.ratingLabel, isDark && styles.textMuted]}>
               {product.rating} · {product.reviews} reviews
             </Text>
           </View>
 
-          <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+          <Text testID="product-detail-price" style={styles.price}>
+            ${product.price.toFixed(2)}
+          </Text>
 
           <View style={[styles.divider, isDark && styles.dividerDark]} />
 
           <Text style={[styles.sectionTitle, isDark && styles.textMuted]}>Description</Text>
-          <Text style={[styles.description, isDark && styles.textLight]}>
+          <Text testID="product-detail-description" style={[styles.description, isDark && styles.textLight]}>
             {product.description}
           </Text>
 
@@ -111,9 +117,12 @@ export default function ProductDetailScreen() {
       <View style={[styles.footer, isDark && styles.footerDark]}>
         <View>
           <Text style={[styles.footerLabel, isDark && styles.textMuted]}>Price</Text>
-          <Text style={styles.footerPrice}>${product.price.toFixed(2)}</Text>
+          <Text testID="product-detail-footer-price" style={styles.footerPrice}>
+            ${product.price.toFixed(2)}
+          </Text>
         </View>
         <TouchableOpacity
+          testID="product-detail-add-to-cart"
           style={[styles.addBtn, added && styles.addBtnSuccess]}
           onPress={handleAddToCart}>
           <Text style={styles.addBtnText}>

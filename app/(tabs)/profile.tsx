@@ -19,14 +19,20 @@ function OrderCard({ order }: { order: Order }) {
   const isDark = useColorScheme() === 'dark';
 
   return (
-    <View style={[styles.orderCard, isDark && styles.orderCardDark]}>
+    <View testID={`order-card-${order.id}`} style={[styles.orderCard, isDark && styles.orderCardDark]}>
       <View style={styles.orderHeader}>
         <View>
-          <Text style={[styles.orderId, isDark && styles.textLight]}>{order.id}</Text>
-          <Text style={[styles.orderDate, isDark && styles.textMuted]}>{order.date}</Text>
+          <Text testID={`order-id-${order.id}`} style={[styles.orderId, isDark && styles.textLight]}>
+            {order.id}
+          </Text>
+          <Text testID={`order-date-${order.id}`} style={[styles.orderDate, isDark && styles.textMuted]}>
+            {order.date}
+          </Text>
         </View>
         <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[order.status] + '22' }]}>
-          <Text style={[styles.statusText, { color: STATUS_COLORS[order.status] }]}>
+          <Text
+            testID={`order-status-${order.id}`}
+            style={[styles.statusText, { color: STATUS_COLORS[order.status] }]}>
             {order.status}
           </Text>
         </View>
@@ -36,7 +42,10 @@ function OrderCard({ order }: { order: Order }) {
 
       <View style={styles.orderItems}>
         {order.items.map(item => (
-          <View key={item.product.id} style={styles.orderItemRow}>
+          <View
+            key={item.product.id}
+            testID={`order-item-${order.id}-${item.product.id}`}
+            style={styles.orderItemRow}>
             <Text style={styles.orderItemEmoji}>{item.product.emoji}</Text>
             <Text style={[styles.orderItemName, isDark && styles.textLight]} numberOfLines={1}>
               {item.product.name}
@@ -52,10 +61,12 @@ function OrderCard({ order }: { order: Order }) {
       <View style={[styles.orderDivider, isDark && styles.orderDividerDark]} />
 
       <View style={styles.orderFooter}>
-        <Text style={[styles.orderItemsCount, isDark && styles.textMuted]}>
+        <Text testID={`order-items-count-${order.id}`} style={[styles.orderItemsCount, isDark && styles.textMuted]}>
           {order.items.reduce((s, i) => s + i.quantity, 0)} items
         </Text>
-        <Text style={styles.orderTotal}>Total: ${order.total.toFixed(2)}</Text>
+        <Text testID={`order-total-${order.id}`} style={styles.orderTotal}>
+          Total: ${order.total.toFixed(2)}
+        </Text>
       </View>
     </View>
   );
@@ -73,7 +84,7 @@ export default function ProfileScreen() {
         </View>
         <View>
           <Text style={[styles.userName, isDark && styles.textLight]}>Guest User</Text>
-          <Text style={[styles.userMeta, isDark && styles.textMuted]}>
+          <Text testID="profile-orders-count" style={[styles.userMeta, isDark && styles.textMuted]}>
             {orders.length} order{orders.length !== 1 ? 's' : ''} placed
           </Text>
         </View>
@@ -84,7 +95,7 @@ export default function ProfileScreen() {
       </View>
 
       {orders.length === 0 ? (
-        <View style={styles.empty}>
+        <View testID="profile-empty-state" style={styles.empty}>
           <Text style={styles.emptyEmoji}>📦</Text>
           <Text style={[styles.emptyTitle, isDark && styles.textLight]}>No orders yet</Text>
           <Text style={[styles.emptySub, isDark && styles.textMuted]}>
@@ -93,6 +104,7 @@ export default function ProfileScreen() {
         </View>
       ) : (
         <FlatList
+          testID="profile-orders-list"
           data={orders}
           keyExtractor={o => o.id}
           contentContainerStyle={styles.list}

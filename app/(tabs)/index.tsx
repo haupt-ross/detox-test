@@ -19,28 +19,30 @@ function ProductCard({ product }: { product: Product }) {
 
   return (
     <TouchableOpacity
+      testID={`product-card-${product.id}`}
       style={styles.card}
       onPress={() => router.push(`/product/${product.id}`)}>
       <View style={[styles.cardImage, { backgroundColor: product.color }]}>
         <Text style={styles.cardEmoji}>{product.emoji}</Text>
       </View>
       <View style={styles.cardBody}>
-        <Text style={styles.cardName} numberOfLines={2}>
+        <Text testID={`product-name-${product.id}`} style={styles.cardName} numberOfLines={2}>
           {product.name}
         </Text>
         <View style={styles.cardRating}>
           <Text style={styles.star}>★</Text>
-          <Text style={styles.ratingText}>
+          <Text testID={`product-rating-${product.id}`} style={styles.ratingText}>
             {product.rating} ({product.reviews})
           </Text>
         </View>
         <View style={styles.cardFooter}>
-          <Text style={styles.cardPrice}>${product.price.toFixed(2)}</Text>
+          <Text testID={`product-price-${product.id}`} style={styles.cardPrice}>
+            ${product.price.toFixed(2)}
+          </Text>
           <TouchableOpacity
+            testID={`product-add-to-cart-${product.id}`}
             style={styles.addButton}
-            onPress={e => {
-              addToCart(product);
-            }}>
+            onPress={() => addToCart(product)}>
             <Text style={styles.addButtonText}>+ Add</Text>
           </TouchableOpacity>
         </View>
@@ -63,7 +65,7 @@ export default function ShopScreen() {
     <View style={[styles.container, isDark && styles.containerDark]}>
       <View style={[styles.header, isDark && styles.headerDark]}>
         <Text style={[styles.headerTitle, isDark && styles.textLight]}>🛍️ ShopApp</Text>
-        <Text style={[styles.headerSub, isDark && styles.textMuted]}>
+        <Text testID="shop-item-count" style={[styles.headerSub, isDark && styles.textMuted]}>
           {filtered.length} items
         </Text>
       </View>
@@ -73,6 +75,7 @@ export default function ShopScreen() {
           {CATEGORIES.map(cat => (
             <Pressable
               key={cat}
+              testID={`category-chip-${cat.toLowerCase()}`}
               style={[
                 styles.categoryChip,
                 selectedCategory === cat && styles.categoryChipActive,
@@ -92,6 +95,7 @@ export default function ShopScreen() {
       </View>
 
       <FlatList
+        testID="shop-product-list"
         data={filtered}
         keyExtractor={item => item.id}
         numColumns={2}

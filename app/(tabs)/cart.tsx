@@ -17,23 +17,32 @@ function CartItemRow({ item }: { item: CartItem }) {
   const isDark = useColorScheme() === 'dark';
 
   return (
-    <View style={[styles.itemRow, isDark && styles.itemRowDark]}>
+    <View testID={`cart-item-${item.product.id}`} style={[styles.itemRow, isDark && styles.itemRowDark]}>
       <View style={[styles.itemThumb, { backgroundColor: item.product.color }]}>
         <Text style={styles.itemEmoji}>{item.product.emoji}</Text>
       </View>
       <View style={styles.itemInfo}>
-        <Text style={[styles.itemName, isDark && styles.textLight]} numberOfLines={2}>
+        <Text
+          testID={`cart-item-name-${item.product.id}`}
+          style={[styles.itemName, isDark && styles.textLight]}
+          numberOfLines={2}>
           {item.product.name}
         </Text>
-        <Text style={styles.itemPrice}>${item.product.price.toFixed(2)}</Text>
+        <Text testID={`cart-item-price-${item.product.id}`} style={styles.itemPrice}>
+          ${item.product.price.toFixed(2)}
+        </Text>
         <View style={styles.qtyRow}>
           <TouchableOpacity
+            testID={`cart-item-decrement-${item.product.id}`}
             style={styles.qtyBtn}
             onPress={() => updateQuantity(item.product.id, item.quantity - 1)}>
             <Text style={styles.qtyBtnText}>−</Text>
           </TouchableOpacity>
-          <Text style={[styles.qtyValue, isDark && styles.textLight]}>{item.quantity}</Text>
+          <Text testID={`cart-item-quantity-${item.product.id}`} style={[styles.qtyValue, isDark && styles.textLight]}>
+            {item.quantity}
+          </Text>
           <TouchableOpacity
+            testID={`cart-item-increment-${item.product.id}`}
             style={styles.qtyBtn}
             onPress={() => updateQuantity(item.product.id, item.quantity + 1)}>
             <Text style={styles.qtyBtnText}>+</Text>
@@ -41,8 +50,12 @@ function CartItemRow({ item }: { item: CartItem }) {
         </View>
       </View>
       <View style={styles.itemRight}>
-        <Text style={styles.itemTotal}>${(item.product.price * item.quantity).toFixed(2)}</Text>
-        <TouchableOpacity onPress={() => removeFromCart(item.product.id)}>
+        <Text testID={`cart-item-total-${item.product.id}`} style={styles.itemTotal}>
+          ${(item.product.price * item.quantity).toFixed(2)}
+        </Text>
+        <TouchableOpacity
+          testID={`cart-item-remove-${item.product.id}`}
+          onPress={() => removeFromCart(item.product.id)}>
           <Text style={styles.removeBtn}>✕</Text>
         </TouchableOpacity>
       </View>
@@ -77,17 +90,19 @@ export default function CartScreen() {
       <View style={[styles.header, isDark && styles.headerDark]}>
         <Text style={[styles.headerTitle, isDark && styles.textLight]}>My Cart</Text>
         {items.length > 0 && (
-          <TouchableOpacity onPress={() => Alert.alert('Clear Cart', 'Remove all items?', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Clear', style: 'destructive', onPress: clearCart },
-          ])}>
+          <TouchableOpacity
+            testID="cart-clear-button"
+            onPress={() => Alert.alert('Clear Cart', 'Remove all items?', [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Clear', style: 'destructive', onPress: clearCart },
+            ])}>
             <Text style={styles.clearText}>Clear</Text>
           </TouchableOpacity>
         )}
       </View>
 
       {items.length === 0 ? (
-        <View style={styles.empty}>
+        <View testID="cart-empty-state" style={styles.empty}>
           <Text style={styles.emptyEmoji}>🛒</Text>
           <Text style={[styles.emptyTitle, isDark && styles.textLight]}>Your cart is empty</Text>
           <Text style={[styles.emptySub, isDark && styles.textMuted]}>
@@ -97,6 +112,7 @@ export default function CartScreen() {
       ) : (
         <>
           <FlatList
+            testID="cart-item-list"
             data={items}
             keyExtractor={item => item.product.id}
             contentContainerStyle={styles.list}
@@ -109,7 +125,7 @@ export default function CartScreen() {
               <Text style={[styles.summaryLabel, isDark && styles.textMuted]}>
                 Subtotal ({totalItems} items)
               </Text>
-              <Text style={[styles.summaryValue, isDark && styles.textLight]}>
+              <Text testID="cart-subtotal" style={[styles.summaryValue, isDark && styles.textLight]}>
                 ${totalPrice.toFixed(2)}
               </Text>
             </View>
@@ -120,9 +136,14 @@ export default function CartScreen() {
             <View style={[styles.summaryDivider, isDark && styles.summaryDividerDark]} />
             <View style={styles.summaryRow}>
               <Text style={[styles.totalLabel, isDark && styles.textLight]}>Total</Text>
-              <Text style={styles.totalValue}>${totalPrice.toFixed(2)}</Text>
+              <Text testID="cart-total" style={styles.totalValue}>
+                ${totalPrice.toFixed(2)}
+              </Text>
             </View>
-            <TouchableOpacity style={styles.checkoutBtn} onPress={handleCheckout}>
+            <TouchableOpacity
+              testID="cart-place-order-button"
+              style={styles.checkoutBtn}
+              onPress={handleCheckout}>
               <Text style={styles.checkoutBtnText}>Place Order</Text>
             </TouchableOpacity>
           </View>
