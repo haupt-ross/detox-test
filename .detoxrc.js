@@ -1,5 +1,14 @@
 /** @type {Detox.DetoxConfig} */
 module.exports = {
+  artifacts: {
+    rootDir: 'artifacts',
+    plugins: {
+      junit: {
+        enabled: true,
+        keepOnlyFailedTestsArtifacts: false,
+      },
+    },
+  },
   testRunner: {
     args: {
       '$0': 'jest',

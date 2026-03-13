@@ -39,3 +39,9 @@ jobs:
 
       - name: detox test
         run: npx detox test -c ios.sim.release
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: detox-artifacts
+          path: artifacts
