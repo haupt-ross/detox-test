@@ -25,6 +25,12 @@ jobs:
       - name: Install dependencies
         run: npm i
 
+      - name: detox Install
+        run: npm install detox-cli --global
+
+      - name: env Setup
+        run: brew tap wix/brew && brew install applesimutils
+
       - name: Expo prebuild
         run: npx expo prebuild
 
