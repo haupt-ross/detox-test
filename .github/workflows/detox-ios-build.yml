@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Build iOS (sim release)
-    runs-on: macos-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout
@@ -25,10 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      # - name: detox Install
-      #   run: npm install detox-cli --global
-      - name: install maestro
-        run: brew tap mobile-dev-inc/tap && brew install mobile-dev-inc/tap/maestro
+      - name: detox Install
+        run: npm install detox-cli --global
 
       - name: env Setup
         run: brew tap wix/brew && brew install applesimutils
@@ -39,29 +37,11 @@ jobs:
       - name: Detox build
         run: npx detox build -c ios.sim.release
 
-      - name: Select and boot simulator
-        # This script finds an available iPhone 15 simulator and boots it
-        run: |
-          SIM_ID=$(xcrun simctl list devices available | grep 'iPhone 17' | head -n 1 | awk '{print $NF}' | tr -d '()')
-          xcrun simctl boot $SIM_ID
-          xcrun simctl install $SIM_ID $PWD/build/Wikipedia.app # Install your app
-          echo "DEVICE_ID=$SIM_ID" >> $GITHUB_ENV # Set the device ID as an environment variable
+      - name: detox test
+        run: npx detox test -c ios.sim.release
 
-      - name: Run Maestro UI tests
-        run: |
-          maestro --device $DEVICE_ID test .maestro/test1.yml
-
-      - name: Upload test artifacts (screenshots, recordings)
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: maestro-reports
-          path: .maestro/
-
-      # - name: detox test
-      #   run: npx detox test -c ios.sim.release
-
-      # - name: Upload Artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: detox-artifacts
-      #     path: artifacts
+          name: detox-artifacts
+          path: artifacts
