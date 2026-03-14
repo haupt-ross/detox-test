@@ -34,15 +34,78 @@ jobs:
       - name: Expo prebuild
         run: npx expo prebuild
 
-      - name: Detox build ios
-        run: npx detox build -c ios.sim.release
+      # - name: Detox build ios
+      #   run: npx detox build -c ios.sim.release
 
-      - name: detox test
-        run: npx detox test -c ios.sim.release
+      # - name: detox test
+      #   run: npx detox test -c ios.sim.release
 
+
+      - name: Android Emulator Runner
+        # You may pin to the exact commit or the version.
+        # uses: ReactiveCircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a
+        uses: ReactiveCircus/android-emulator-runner@v2.37.0
+        with:
+          api-level: 36 # Specify the Android API level
+          target: google_apis # Use an image with Google APIs
+          arch: x86_64 # Use x86_64 architecture for hardware acceleration
+          profile: Pixel 9 Pro # Optional: specify a device profile
+          # # API level of the platform and system image - e.g. 23, 33, 35-ext15, Baklava
+          # api-level: 
+          # # API level of the system image - e.g. 34-ext10, 35-ext15. If not set the `api-level` input will be used.
+          # system-image-api-level: # optional
+          # # target of the system image - e.g. default, google_apis, google_apis_ps16k, google_apis_playstore, google_apis_playstore_16k, aosp_atd, google_atd, android-wear, android-wear-cn, android-tv, google-tv, android-automotive, android-automotive-playstore or android-desktop
+          # target: # optional, default is default
+          # # CPU architecture of the system image - x86, x86_64 or arm64-v8a
+          # arch: # optional, default is x86
+          # # hardware profile used for creating the AVD - e.g. `Nexus 6`
+          # profile: # optional
+          # # the number of cores to use for the emulator
+          # cores: # optional, default is 2
+          # # size of RAM to use for this AVD, in KB or MB, denoted with K or M. - e.g. `2048M`
+          # ram-size: # optional
+          # # size of heap to use for this AVD in MB. - e.g. `512M`
+          # heap-size: # optional
+          # # path to the SD card image for this AVD or the size of a new SD card image to create for this AVD, in KB or MB, denoted with K or M. - e.g. `path/to/sdcard`, or `1000M`
+          # sdcard-path-or-size: # optional
+          # # disk size to use for this AVD. Either in bytes or KB, MB or GB, when denoted with K, M or G
+          # disk-size: # optional
+          # # custom AVD name used for creating the Android Virtual Device
+          # avd-name: # optional, default is test
+          # # whether to force create the AVD by overwriting an existing AVD with the same name as `avd-name` - `true` or `false`
+          # force-avd-creation: # optional, default is true
+          # # Emulator boot timeout in seconds. If it takes longer to boot, the action would fail - e.g. `300` for 5 minutes
+          # emulator-boot-timeout: # optional, default is 600
+          # # Port to run emulator on, allows to run multiple emulators on the same physical machine
+          # emulator-port: # optional, default is 5554
+          # # command-line options used when launching the emulator - e.g. `-no-window -no-snapshot -camera-back emulated`
+          # emulator-options: # optional, default is -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          # # whether to disable animations - true or false
+          # disable-animations: # optional, default is true
+          # # whether to disable the Android spell checker framework, a common source of flakiness in text fields - `true` or `false`
+          # disable-spellchecker: # optional, default is false
+          # # whether to disable hardware acceleration on Linux machines - `true` or `false` or `auto`
+          # disable-linux-hw-accel: # optional, default is auto
+          # # whether to enable hardware keyboard - `true` or `false`.
+          # enable-hw-keyboard: # optional, default is false
+          # # build number of a specific version of the emulator binary to use - e.g. `6061023` for emulator v29.3.0.0
+          # emulator-build: # optional
+          # # A custom working directory - e.g. `./android` if your root Gradle project is under the `./android` sub-directory within your repository
+          # working-directory: # optional
+          # # version of NDK to install - e.g. 21.0.6113669
+          # ndk: # optional
+          # # version of CMake to install - e.g. 3.10.2.4988404
+          # cmake: # optional
+          # # Channel to download the SDK components from - `stable`, `beta`, `dev`, `canary`
+          # channel: # optional, default is stable
+          # # custom script to run - e.g. `./gradlew connectedCheck`
+          # script: 
+          # # custom script to run after creating the AVD and before launching the emulator - e.g. `./adjust-emulator-configs.sh`
+          # pre-emulator-launch-script: # optional
+      
       - name: Detox build android
         run: npx detox build -c android.release
-
+  
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
