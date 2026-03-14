@@ -1,0 +1,11 @@
+appId: com.haupt.ross.detoxtest
+---
+- launchApp:
+    clearState: true
+
+- assertVisible:
+    id: category-chip-electronics
+    text: Electronics
+
+- tapOn:
+    id: category-chip-electronics
