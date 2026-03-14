@@ -46,7 +46,7 @@ jobs:
         # uses: ReactiveCircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a
         uses: ReactiveCircus/android-emulator-runner@v2.37.0
         with:
-          api-level: 36 # Specify the Android API level
+          api-level: 34 # Specify the Android API level
           target: google_apis # Use an image with Google APIs
           arch: x86_64 # Use x86_64 architecture for hardware acceleration
           profile: pixel_7_pro # Optional: specify a device profile
