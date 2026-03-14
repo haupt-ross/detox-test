@@ -49,7 +49,7 @@ jobs:
           api-level: 36 # Specify the Android API level
           target: google_apis # Use an image with Google APIs
           arch: x86_64 # Use x86_64 architecture for hardware acceleration
-          profile: Pixel 9 Pro # Optional: specify a device profile
+          profile: Pixel_9_Pro # Optional: specify a device profile
           script: ./gradlew connectedCheck
           # # API level of the platform and system image - e.g. 23, 33, 35-ext15, Baklava
           # api-level: 
