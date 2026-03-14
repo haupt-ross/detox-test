@@ -40,6 +40,8 @@ jobs:
       # - name: detox test
       #   run: npx detox test -c ios.sim.release
 
+      - name: Detox build android
+        run: npx detox build -c android.release
 
       - name: Android Emulator Runner
         # You may pin to the exact commit or the version.
@@ -50,7 +52,7 @@ jobs:
           target: google_apis # Use an image with Google APIs
           arch: arm64-v8a # Use x86_64 architecture for hardware acceleration
           profile: pixel_7_pro # Optional: specify a device profile
-          script: ./gradlew connectedCheck
+          script: detox test -c android.emu.release
           # # API level of the platform and system image - e.g. 23, 33, 35-ext15, Baklava
           # api-level: 
           # # API level of the system image - e.g. 34-ext10, 35-ext15. If not set the `api-level` input will be used.
@@ -104,8 +106,7 @@ jobs:
           # # custom script to run after creating the AVD and before launching the emulator - e.g. `./adjust-emulator-configs.sh`
           # pre-emulator-launch-script: # optional
       
-      - name: Detox build android
-        run: npx detox build -c android.release
+
   
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
