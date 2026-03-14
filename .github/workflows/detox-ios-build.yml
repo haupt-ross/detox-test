@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  ios:
-    name: Build and Test iOS (sim release)
+  build-ios:
+    name: Build iOS
     runs-on: self-hosted
 
     steps:
@@ -37,13 +37,53 @@ jobs:
       - name: Detox build ios
         run: npx detox build -c ios.sim.release
 
+      - name: Upload iOS build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: ios/build/Build/Products/Release-iphonesimulator/detoxtest.app
+
+  test-ios:
+    name: Test iOS (${{ matrix.config }})
+    needs: build-ios
+    runs-on: self-hosted
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - ios.sim.iphone_16e.release
+          - ios.sim.iphone_16_pro_max.release
+          - ios.sim.iphone_16_pro.release
+          - ios.sim.iphone_16_plus.release
+          - ios.sim.iphone_16.release
+          - ios.sim.iphone_13.release
+          - ios.sim.ipad_mini_a17_pro.release
+          - ios.sim.ipad_pro_13_m4.release
+          - ios.sim.ipad_pro_11_m4.release
+          - ios.sim.ipad_air_13_m3.release
+          - ios.sim.ipad_air_11_m3.release
+          - ios.sim.ipad_a16.release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Download iOS build
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-build
+          path: ios/build/Build/Products/Release-iphonesimulator/detoxtest.app
+
       - name: Detox test ios
-        run: npx detox test -c ios.sim.release
+        run: npx detox test -c ${{ matrix.config }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: detox-artifacts-ios
+          name: detox-artifacts-ios-${{ matrix.config }}
           path: artifacts
 
   android:
