@@ -41,7 +41,7 @@ jobs:
       #   run: npx detox test -c ios.sim.release
 
       - name: Detox build android
-        run: npx detox build -c android.release
+        run: npx detox build -c android.emu.release
 
       - name: Android Emulator Runner
         # You may pin to the exact commit or the version.
